@@ -3,7 +3,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
@@ -13,12 +12,14 @@ public class RegistrationTest {
     private WebDriver driver;
     private RegistrationPage objRegistrationPage;
     private String accessToken;
+    private final Browser browserFactory = new Browser();
     private static final String BASE_URL = "https://qa-stellarburgers.education-services.ru";
 
 
     @BeforeEach
     void SetUp(){
-        driver = new ChromeDriver();
+        String browser = System.getProperty("browser", "chrome");
+        driver = browserFactory.getWebDriver(browser);
         driver.get(BASE_URL + "/register");
         objRegistrationPage = new RegistrationPage(driver);
         accessToken = null;

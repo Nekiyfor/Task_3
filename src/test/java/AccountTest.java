@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -22,11 +20,13 @@ public class AccountTest {
     private LoginPage objLoginPage;
     private BurgerConstructorPage objConstructorPage;
     private String accessToken;
+    private final Browser browserFactory = new Browser();
     private static final String BASE_URL = "https://qa-stellarburgers.education-services.ru";
 
     @BeforeEach
     public void SetUp(){
-        driver = new ChromeDriver();
+        String browser = System.getProperty("browser", "chrome");
+        driver = browserFactory.getWebDriver(browser);
         objAccountPage = new AccountPage(driver);
         objLoginPage = new LoginPage(driver);
         objConstructorPage = new BurgerConstructorPage(driver);

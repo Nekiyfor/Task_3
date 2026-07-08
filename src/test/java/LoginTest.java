@@ -7,7 +7,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -16,16 +15,18 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LoginTest {
-    private static WebDriver driver;
+    private WebDriver driver;
     private LoginPage objLoginPage;
     private BurgerConstructorPage objBurgerConstructorPage;
     private String accessToken;
+    private final Browser browserFactory = new Browser();
     private static final String BASE_URL = "https://qa-stellarburgers.education-services.ru";
 
 
     @BeforeEach
     void SetUp(){
-        driver = new ChromeDriver();
+        String browser = System.getProperty("browser", "chrome");
+        driver = browserFactory.getWebDriver(browser);
         objLoginPage = new LoginPage(driver);
         objBurgerConstructorPage = new BurgerConstructorPage(driver);
         accessToken = null;

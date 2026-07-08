@@ -6,21 +6,19 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-
 
 import java.util.stream.Stream;
-
-
 
 public class BurgerConstructorTest {
     private WebDriver driver;
     private BurgerConstructorPage objBurgerConstructorPage;
+    private final Browser browserFactory = new Browser();
     private static final String BASE_URL = "https://qa-stellarburgers.education-services.ru";
 
     @BeforeEach
     public void SetUp(){
-        driver = new ChromeDriver();
+        String browser = System.getProperty("browser", "chrome");
+        driver = browserFactory.getWebDriver(browser);
         objBurgerConstructorPage = new BurgerConstructorPage(driver);
         driver.get(BASE_URL);
     }
