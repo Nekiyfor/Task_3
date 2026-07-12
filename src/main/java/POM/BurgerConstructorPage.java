@@ -1,3 +1,6 @@
+package POM;
+
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -20,8 +23,9 @@ public class BurgerConstructorPage {
         this.wait = new WebDriverWait(driver, ofSeconds(3));
     }
 
-    public void clickTab(String selectTab){
-        switch (selectTab){
+    @Step("Выбор и клик вдкладки ингридиентов в конструкторе бургеров")
+    public void clickTab(String selectTab) {
+        switch (selectTab) {
             case "tabBread":
                 driver.findElement(tabBread).click();
                 break;
@@ -34,16 +38,19 @@ public class BurgerConstructorPage {
         }
     }
 
-    public String CurrentTabText() {
-            return wait.until(ExpectedConditions.visibilityOfElementLocated(currentTab)).getText();
+    @Step("Получение названия текущей вкладки")
+    public String currentTabText() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(currentTab)).getText();
     }
-    //Метод нужен для проверки того что владка неактивна, прежде чем на неё кликнуть
+
+    @Step("Проверка того что вкладка неактивна перед кликом")
     public boolean isTabActive(String expectedTabText) {
         String activeTabText = wait.until(ExpectedConditions.visibilityOfElementLocated(currentTab)).getText();
         return activeTabText.contains(expectedTabText);
     }
 
-    public boolean CurrentTabIsDisplayed(){
+    @Step("Проверка отображения текущей вкладки")
+    public boolean currentTabIsDisplayed() {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(currentTab));
             return true;
@@ -52,7 +59,7 @@ public class BurgerConstructorPage {
         }
     }
 
-
+    @Step("Проверка отображения конструктора бургеров")
     public boolean constructorOrderButtonDisplayed() {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(constructorOrderButton));

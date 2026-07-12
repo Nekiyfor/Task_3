@@ -1,3 +1,6 @@
+package POM;
+
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -19,22 +22,26 @@ public class AccountPage {
         this.wait = new WebDriverWait(driver, ofSeconds(3));
     }
 
-    public void LoguotClick() {
+    @Step("Клик по кнопке Выход")
+    public void logoutClick() {
         wait.until(ExpectedConditions.elementToBeClickable(logout));
         driver.findElement(logout).click();
     }
 
-    public void BurgerConstClick() {
+    @Step("Клик по кнопке КОнструктора бургеров")
+    public void burgerConstClick() {
         wait.until(ExpectedConditions.elementToBeClickable(burgerConst));
         driver.findElement(burgerConst).click();
     }
 
-    public void LogotypeClick() {
+    @Step("Клик по логотипу")
+    public void logotypeClick() {
         wait.until(ExpectedConditions.elementToBeClickable(logotype));
         driver.findElement(logotype).click();
     }
 
-    public boolean ProfileDataIsDisplayed(){
+    @Step("Проверка отображения информации о пользователе в личном кабинете")
+    public boolean profileDataIsDisplayed() {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(profileData));
             return true;

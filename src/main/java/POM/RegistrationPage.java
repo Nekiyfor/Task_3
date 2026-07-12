@@ -1,3 +1,6 @@
+package POM;
+
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -22,10 +25,12 @@ public class RegistrationPage {
         this.wait = new WebDriverWait(driver, ofSeconds(3));
     }
 
-    public void ClickRegButton() {
+    @Step("Клик по кнопке регистрации")
+    public void clickRegButton() {
         driver.findElement(registrationButton).click();
     }
 
+    @Step("Заполнение полей формы регистрации")
     public void fillForm(String name, String email, String password) {
         wait.until(ExpectedConditions.visibilityOfElementLocated(registrationForm));
         driver.findElement(fieldName).sendKeys(name);
@@ -33,6 +38,7 @@ public class RegistrationPage {
         driver.findElement(fieldPassword).sendKeys(password);
     }
 
+    @Step("Проверка отображения ошибки регистрации")
     public boolean isInputErrorDisplayed() {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(inputError));
@@ -41,7 +47,9 @@ public class RegistrationPage {
             return false;
         }
     }
-    public boolean LoginFormDisplayed() {
+
+    @Step("Проверка отображения формы авторизации")
+    public boolean loginFormDisplayed() {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(loginHeader));
             return true;
