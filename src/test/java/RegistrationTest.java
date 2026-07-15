@@ -1,26 +1,28 @@
+import Configuration.AccountSteps;
+import Configuration.Browser;
+import Configuration.Config;
+import POM.RegistrationPage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
-import io.restassured.response.Response;
-
-import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RegistrationTest {
     private WebDriver driver;
     private RegistrationPage objRegistrationPage;
     private String accessToken;
+    private final AccountSteps accountStep = new AccountSteps();
     private final Browser browserFactory = new Browser();
-    private static final String BASE_URL = "https://qa-stellarburgers.education-services.ru";
+
 
 
     @BeforeEach
-    void SetUp(){
+    void setUp(){
         String browser = System.getProperty("browser", "chrome");
         driver = browserFactory.getWebDriver(browser);
-        driver.get(BASE_URL + "/register");
+        driver.get(Config.BASE_URL + "/register");
         objRegistrationPage = new RegistrationPage(driver);
         accessToken = null;
     }
@@ -28,40 +30,25 @@ public class RegistrationTest {
     @Test
     @DisplayName("Проверка успешной регистрации юзера")
     public void successfulRegistrationTest(){
-        String email = "peace_data_" + System.currentTimeMillis() + "@yandex.ru";
+        String email = Config.uniqueEmail();
         objRegistrationPage.fillForm("Mr. Bean", email, "password");
-        objRegistrationPage.ClickRegButton();
-        assertTrue(objRegistrationPage.LoginFormDisplayed(), "Регистрация не завершена");
-
-        UserAccount user = new UserAccount(email, "password", "Mr. Bin");
-        Response loginResponse = given()
-                .baseUri(BASE_URL)
-                .header("Content-type", "application/json")
-                .body(user)
-                .post("/api/auth/login");
-        accessToken = loginResponse.jsonPath().getString("accessToken");
-        assertTrue(accessToken != null && !accessToken.isBlank(), "Токен авторизации не получен");
+        objRegistrationPage.clickRegButton();
+        assertTrue(objRegistrationPage.loginFormDisplayed(), "Регистрация не завершена");
+        accessToken = accountStep.loginUser(email, "password");
     }
 
     @Test
     @DisplayName("Проверка отображения ошибки регистрации при вводе короткого пароля")
     public void errorIsVisibleWhenShortPassTest(){
-        String email = "peace_data_" + System.currentTimeMillis() + "@yandex.ru";
-        objRegistrationPage.fillForm("Mr. Bean", email, "pass");
-        objRegistrationPage.ClickRegButton();
+        objRegistrationPage.fillForm("Mr. Bean", Config.uniqueEmail(), "pass");
+        objRegistrationPage.clickRegButton();
         assertTrue(objRegistrationPage.isInputErrorDisplayed(), "Ошибка регистрации не отображается");
     }
 
     @AfterEach
     void cleanup() {
         try {
-            if (accessToken != null && !accessToken.isBlank()) {
-                given()
-                        .baseUri(BASE_URL)
-                        .contentType("application/json")
-                        .header("Authorization", accessToken)
-                        .delete("/api/auth/user");
-            }
+            accountStep.deleteUser(accessToken);
         } catch (Exception e) {
             System.err.println("Не удалось удалить пользователя через API: " + e.getMessage());
         } finally {

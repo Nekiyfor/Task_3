@@ -1,4 +1,9 @@
-import io.restassured.response.Response;
+
+import Configuration.AccountSteps;
+import Configuration.Browser;
+import Configuration.Config;
+import POM.BurgerConstructorPage;
+import POM.LoginPage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +16,6 @@ import org.openqa.selenium.WebDriver;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LoginTest {
@@ -19,12 +23,12 @@ public class LoginTest {
     private LoginPage objLoginPage;
     private BurgerConstructorPage objBurgerConstructorPage;
     private String accessToken;
+    private final AccountSteps accountStep = new AccountSteps();
     private final Browser browserFactory = new Browser();
-    private static final String BASE_URL = "https://qa-stellarburgers.education-services.ru";
 
 
     @BeforeEach
-    void SetUp(){
+    void setUp() {
         String browser = System.getProperty("browser", "chrome");
         driver = browserFactory.getWebDriver(browser);
         objLoginPage = new LoginPage(driver);
@@ -34,19 +38,11 @@ public class LoginTest {
 
     @Test
     @DisplayName("Проверка на успешный вход в аккаунт")
-    public void successfulLoginTest(){
-        String email = "peace_data_" + System.currentTimeMillis() + "@yandex.ru";
-        UserAccount user = new UserAccount(email, "password", "Mr. Bin");
-        Response loginResponse = given()
-                .baseUri(BASE_URL)
-                .header("Content-type", "application/json")
-                .body(user)
-                .post("/api/auth/register");
-        accessToken = loginResponse.jsonPath().getString("accessToken");
-        assertTrue(accessToken != null && !accessToken.isBlank(), "Токен авторизации не получен");
-
-        driver.get(BASE_URL + "/login");
-        objLoginPage.Login(email,"password");
+    public void successfulLoginTest() {
+        String email = Config.uniqueEmail();
+        accessToken = accountStep.registerUser(email, "password", "Mr. Bean");
+        driver.get(Config.BASE_URL + "/login");
+        objLoginPage.login(email, "password");
         assertTrue(objBurgerConstructorPage.constructorOrderButtonDisplayed(), "Не удалось авторизоваться в системе");
     }
 
@@ -61,10 +57,10 @@ public class LoginTest {
 
     private static Stream<Arguments> provideAuthFormTransitionData() {
         return Stream.of(
-                Arguments.of("Со страницы конструктора", BASE_URL, (Consumer<LoginPage>) LoginPage::constructorLoginButtonClick),
-                Arguments.of("Со страницы ленты заказов", BASE_URL + "/feed", (Consumer<LoginPage>) LoginPage::accountButtonClick),
-                Arguments.of("Из формы регистрации", BASE_URL + "/register", (Consumer<LoginPage>) LoginPage::otherPageLoginButtonClick),
-                Arguments.of("Из формы восстановления пароля", BASE_URL + "/forgot-password", (Consumer<LoginPage>) LoginPage::otherPageLoginButtonClick)
+                Arguments.of("Со страницы конструктора", Config.BASE_URL, (Consumer<LoginPage>) LoginPage::constructorLoginButtonClick),
+                Arguments.of("Со страницы ленты заказов", Config.BASE_URL + "/feed", (Consumer<LoginPage>) LoginPage::accountButtonClick),
+                Arguments.of("Из формы регистрации", Config.BASE_URL + "/register", (Consumer<LoginPage>) LoginPage::otherPageLoginButtonClick),
+                Arguments.of("Из формы восстановления пароля", Config.BASE_URL + "/forgot-password", (Consumer<LoginPage>) LoginPage::otherPageLoginButtonClick)
         );
     }
 
@@ -72,13 +68,7 @@ public class LoginTest {
     @AfterEach
     void cleanup() {
         try {
-            if (accessToken != null && !accessToken.isBlank()) {
-                given()
-                        .baseUri(BASE_URL)
-                        .contentType("application/json")
-                        .header("Authorization", accessToken)
-                        .delete("/api/auth/user");
-            }
+            accountStep.deleteUser(accessToken);
         } catch (Exception e) {
             System.err.println("Не удалось удалить пользователя через API: " + e.getMessage());
         } finally {
