@@ -1,6 +1,6 @@
-import Configuration.Browser;
-import Configuration.Config;
-import POM.BurgerConstructorPage;
+import configuration.Browser;
+import configuration.Config;
+import pom.BurgerConstructorPage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

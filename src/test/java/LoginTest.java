@@ -1,9 +1,9 @@
 
-import Configuration.AccountSteps;
-import Configuration.Browser;
-import Configuration.Config;
-import POM.BurgerConstructorPage;
-import POM.LoginPage;
+import configuration.AccountSteps;
+import configuration.Browser;
+import configuration.Config;
+import pom.BurgerConstructorPage;
+import pom.LoginPage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
