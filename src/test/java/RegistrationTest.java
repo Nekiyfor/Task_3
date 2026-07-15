@@ -1,7 +1,7 @@
-import Configuration.AccountSteps;
-import Configuration.Browser;
-import Configuration.Config;
-import POM.RegistrationPage;
+import configuration.AccountSteps;
+import configuration.Browser;
+import configuration.Config;
+import pom.RegistrationPage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

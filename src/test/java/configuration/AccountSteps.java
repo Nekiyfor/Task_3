@@ -1,6 +1,6 @@
-package Configuration;
+package configuration;
 
-import API.UserAccount;
+import api.UserAccount;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
